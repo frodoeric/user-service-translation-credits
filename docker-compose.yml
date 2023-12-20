@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  userservice_api:
+    image: "userservice-api:latest"
+    container_name: "userservice-api"
+    build:
+      context: .
+      dockerfile: src/UserService.API/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+      DOTNET_RUNNING_IN_CONTAINER: true
+      ConnectionStrings__Database: "Server=userservice_local_db,1433; Database=UserService; User Id=sa; Password=aPassword1!; TrustServerCertificate=true;"
+      ConnectionStrings__Hangfire: "Server=userservice_local_db,1433; Database=UserServiceBackgroundJobs; User Id=sa; Password=aPassword1!; TrustServerCertificate=true;"
+    ports:
+      - "8001:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+      userservice_local_db:
+       condition: service_healthy
+  
+  userservice_local_db:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    container_name: "userservice-local-db"
+    ports:
+      - "8003:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "aPassword1!"
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-Usa", "-PaPassword1!", "-Q", "select 1"]
+      interval: 1s
+      retries: 20
+      start_period: 3s
