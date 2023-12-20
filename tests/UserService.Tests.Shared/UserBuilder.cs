@@ -1,13 +1,15 @@
+using UserService.Domain.ValueObjects;
+
 namespace UserService.Tests.Shared
 {
-	public class UserBuilder
+    public class UserBuilder
 	{
-		private string email = UniqueEmailGenerator.Generate();
+        private Email email = Email.Create(UniqueEmailGenerator.Generate()).Value;
 		private Name name = Name.Create("Testy").Value;
 
 		public User Build() => new(name, email);
 
-		public UserBuilder WithEmail(string val)
+		public UserBuilder WithEmail(Email val)
 		{
 			email = val;
 			return this;

@@ -1,8 +1,9 @@
+using UserService.Domain.ValueObjects;
 using Xunit;
 
 namespace UserService.Domain.Test.Unit
 {
-	public class NameTests
+    public class NameTests
 	{
 		[Fact]
 		public void CanBeCreated()

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using UserService.Application.Models;
 using UserService.Application.Ports;
 using UserService.Domain.Core;
+using UserService.Domain.ValueObjects;
 
 namespace UserService.Application;
 
@@ -18,11 +19,14 @@ public class UserCreator
 	public async Task<Result<long, Error>> Create(UserData model)
 	{
 		var nameResult = Name.Create(model.Name);
+		var emailResult = Email.Create(model.Email);
 
 		if (nameResult.IsFailure)
 			return Result.Failure<long, Error>(new Error(nameResult.Error));
+		if (emailResult.IsFailure)
+			return Result.Failure<long, Error>(new Error(emailResult.Error));
 
-		if (!Regex.IsMatch(model.Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
+		if (!Regex.IsMatch(emailResult.Value, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
 			throw new Exception("Email is invalid");
 
 		User.Repository = new UserRepository(repository); // Get user repository ready in User
@@ -30,7 +34,7 @@ public class UserCreator
 		User user;
 		try
 		{
-			user = User.Create(nameResult.Value, model.Email);
+			user = User.Create(nameResult.Value, emailResult.Value);
 		}
 		catch (Exception ex)
 		{

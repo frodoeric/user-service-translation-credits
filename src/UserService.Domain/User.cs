@@ -1,18 +1,20 @@
-﻿namespace UserService.Domain;
+﻿using UserService.Domain.ValueObjects;
+
+namespace UserService.Domain;
 
 public class User : Entity
 {
 	public static IUserRepository Repository { get; set; }
 	public Name Name { get; protected set; }
-	public string Email { get; protected set; }
+	public Email Email { get; protected set; }
 
-	public User(Name name, string email)
+	public User(Name name, Email email)
 	{
 		Name = name;
 		Email = email;
 	}
 
-	public static User Create(Name name, string email)
+	public static User Create(Name name, Email email)
 	{
 		var allUsers = Repository.GetAll();
 		if (allUsers.Any(u => u.Email == email))
