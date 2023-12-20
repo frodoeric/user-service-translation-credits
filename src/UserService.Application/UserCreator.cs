@@ -21,40 +21,43 @@ public class UserCreator
 		var nameResult = Name.Create(model.Name);
 		var emailResult = Email.Create(model.Email);
 
-		if (nameResult.IsFailure)
-			return Result.Failure<long, Error>(new Error(nameResult.Error));
-		if (emailResult.IsFailure)
-			return Result.Failure<long, Error>(new Error(emailResult.Error));
+        if (nameResult.IsFailure || emailResult.IsFailure)
+        {
+            var errors = new List<string>();
+            if (nameResult.IsFailure)
+            {
+                errors.Add(nameResult.Error.Message);
+            }
+            if (emailResult.IsFailure)
+            {
+                errors.Add(emailResult.Error.Message);
+            }
+            var combinedErrorMessage = string.Join(" ", errors);
+            return Result.Failure<long, Error>(new Error(combinedErrorMessage));
+        }
 
-		if (!Regex.IsMatch(emailResult.Value, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
-			throw new Exception("Email is invalid");
+        User.Repository = new UserRepository(repository); // Get user repository ready in User
 
-		User.Repository = new UserRepository(repository); // Get user repository ready in User
+		var user = User.Create(nameResult.Value, emailResult.Value);
 
-		User user;
-		try
-		{
-			user = User.Create(nameResult.Value, emailResult.Value);
-		}
-		catch (Exception ex)
-		{
-			return Result.Failure<long, Error>(
-			new UniqueConstraintViolationError(
-				"User with given Email already exists.", nameof(User), nameof(User.Email)));
-		}
+        if (user.IsFailure)
+        {
+            return Result.Failure<long, Error>(user.Error);
+        }
 
-		RegisterInCrm(user);
+        await RegisterInCrm(user.Value);
 
-		return Result.Success<long, Error>(user.Id);
+		return Result.Success<long, Error>(user.Value.Id);
 	}
 
-	private void RegisterInCrm(User user)
+	private static Task RegisterInCrm(User user)
 	{
 		var httpClient = new HttpClient();
 		httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
 		var message = new HttpRequestMessage(HttpMethod.Post, "users");
 		message.Content = JsonContent.Create(new { Name = user.Name, Email = user.Email });
 		httpClient.Send(message);
+		return Task.CompletedTask;
 	}
 
 	private class UserRepository : IUserRepository
