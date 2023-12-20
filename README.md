@@ -1,0 +1,1 @@
+# user-service-translation-credits
