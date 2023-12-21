@@ -1,22 +1,22 @@
-﻿using System.Net.Http.Json;
-using System.Text.RegularExpressions;
-using UserService.Application.Models;
-using UserService.Application.Ports;
+﻿using UserService.Application.Models;
 using UserService.Domain.Core;
 using UserService.Domain.ValueObjects;
+using UserService.Infrastructure.Services;
 
 namespace UserService.Application;
 
 public class UserCreator
 {
-	private readonly IAsyncRepository repository;
+	private readonly IUserRepository userRepository;
+    private readonly ICrmService crmService;
 
-	public UserCreator(IAsyncRepository repository)
-	{
-		this.repository = repository;
-	}
+	public UserCreator(IUserRepository userRepository, ICrmService crmService)
+    {
+        this.userRepository = userRepository;
+        this.crmService = crmService;
+    }
 
-	public async Task<Result<long, Error>> Create(UserData model)
+    public async Task<Result<long, Error>> Create(UserData model)
 	{
 		var nameResult = Name.Create(model.Name);
 		var emailResult = Email.Create(model.Email);
@@ -36,7 +36,7 @@ public class UserCreator
             return Result.Failure<long, Error>(new Error(combinedErrorMessage));
         }
 
-        User.Repository = new UserRepository(repository); // Get user repository ready in User
+        User.Repository = this.userRepository; // Get user repository ready in User
 
 		var user = User.Create(nameResult.Value, emailResult.Value);
 
@@ -45,34 +45,8 @@ public class UserCreator
             return Result.Failure<long, Error>(user.Error);
         }
 
-        await RegisterInCrm(user.Value);
+        await this.crmService.RegisterUser(user.Value.Name, user.Value.Email);
 
 		return Result.Success<long, Error>(user.Value.Id);
-	}
-
-	private static Task RegisterInCrm(User user)
-	{
-		var httpClient = new HttpClient();
-		httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
-		var message = new HttpRequestMessage(HttpMethod.Post, "users");
-		message.Content = JsonContent.Create(new { Name = user.Name, Email = user.Email });
-		httpClient.Send(message);
-		return Task.CompletedTask;
-	}
-
-	private class UserRepository : IUserRepository
-	{
-		public UserRepository(IAsyncRepository repository)
-		{
-			this.repository = repository;
-		}
-
-		private IAsyncRepository repository { get; init; }
-
-		public void Add(User user) => repository.Add(user);
-
-		public IEnumerable<User> GetAll() => repository.GetAll<User>().GetAwaiter().GetResult();
-
-		public void Save() => repository.CommitChanges().GetAwaiter().GetResult();
 	}
 }
