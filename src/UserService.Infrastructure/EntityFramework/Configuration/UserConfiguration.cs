@@ -7,8 +7,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
 	public void Configure(EntityTypeBuilder<User> builder)
 	{
-		builder.Property(u => u.Email).HasColumnName("Email");
-		builder.HasIndex(u => u.Email).IsUnique();
+		builder.OwnsOne(u => u.Email).Property(u => u.Value).HasColumnName("Email");
+        builder.OwnsOne(u => u.Email).HasIndex(u => u.Value).IsUnique();
 
 		builder.OwnsOne(u => u.Name).Property(e => e.Value).HasColumnName("Name");
 	}

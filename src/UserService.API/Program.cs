@@ -1,7 +1,7 @@
 using UserService.API.ErrorResponseHandling;
 using UserService.API.Setup;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
+using UserService.Infrastructure.Services;
+using UserService.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +29,9 @@ builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 //if (EnableBackgroundJobs)
 //	builder.Services.AddBackgroundJobs(builder.Configuration);
+
+builder.Services.AddScoped<ICrmService, CrmService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

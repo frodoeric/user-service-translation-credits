@@ -1,71 +1,52 @@
-﻿using System.Net.Http.Json;
-using System.Text.RegularExpressions;
-using UserService.Application.Models;
-using UserService.Application.Ports;
+﻿using UserService.Application.Models;
 using UserService.Domain.Core;
+using UserService.Domain.ValueObjects;
+using UserService.Infrastructure.Services;
 
 namespace UserService.Application;
 
 public class UserCreator
 {
-	private readonly IAsyncRepository repository;
+	private readonly IUserRepository userRepository;
+    private readonly ICrmService crmService;
 
-	public UserCreator(IAsyncRepository repository)
-	{
-		this.repository = repository;
-	}
+	public UserCreator(IUserRepository userRepository, ICrmService crmService)
+    {
+        this.userRepository = userRepository;
+        this.crmService = crmService;
+    }
 
-	public async Task<Result<long, Error>> Create(UserData model)
+    public async Task<Result<long, Error>> Create(UserData model)
 	{
 		var nameResult = Name.Create(model.Name);
+		var emailResult = Email.Create(model.Email);
 
-		if (nameResult.IsFailure)
-			return Result.Failure<long, Error>(new Error(nameResult.Error));
+        if (nameResult.IsFailure || emailResult.IsFailure)
+        {
+            var errors = new List<string>();
+            if (nameResult.IsFailure)
+            {
+                errors.Add(nameResult.Error.Message);
+            }
+            if (emailResult.IsFailure)
+            {
+                errors.Add(emailResult.Error.Message);
+            }
+            var combinedErrorMessage = string.Join(" ", errors);
+            return Result.Failure<long, Error>(new Error(combinedErrorMessage));
+        }
 
-		if (!Regex.IsMatch(model.Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
-			throw new Exception("Email is invalid");
+        User.Repository = this.userRepository; // Get user repository ready in User
 
-		User.Repository = new UserRepository(repository); // Get user repository ready in User
+		var user = User.Create(nameResult.Value, emailResult.Value);
 
-		User user;
-		try
-		{
-			user = User.Create(nameResult.Value, model.Email);
-		}
-		catch (Exception ex)
-		{
-			return Result.Failure<long, Error>(
-			new UniqueConstraintViolationError(
-				"User with given Email already exists.", nameof(User), nameof(User.Email)));
-		}
+        if (user.IsFailure)
+        {
+            return Result.Failure<long, Error>(user.Error);
+        }
 
-		RegisterInCrm(user);
+        await this.crmService.RegisterUser(user.Value.Name, user.Value.Email);
 
-		return Result.Success<long, Error>(user.Id);
-	}
-
-	private void RegisterInCrm(User user)
-	{
-		var httpClient = new HttpClient();
-		httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
-		var message = new HttpRequestMessage(HttpMethod.Post, "users");
-		message.Content = JsonContent.Create(new { Name = user.Name, Email = user.Email });
-		httpClient.Send(message);
-	}
-
-	private class UserRepository : IUserRepository
-	{
-		public UserRepository(IAsyncRepository repository)
-		{
-			this.repository = repository;
-		}
-
-		private IAsyncRepository repository { get; init; }
-
-		public void Add(User user) => repository.Add(user);
-
-		public IEnumerable<User> GetAll() => repository.GetAll<User>().GetAwaiter().GetResult();
-
-		public void Save() => repository.CommitChanges().GetAwaiter().GetResult();
+		return Result.Success<long, Error>(user.Value.Id);
 	}
 }
