@@ -2,6 +2,9 @@ using UserService.API.ErrorResponseHandling;
 using UserService.API.Setup;
 using UserService.Infrastructure.Services;
 using UserService.Infrastructure.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using UserService.API.Contract.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,9 @@ builder.Services.AddControllers(options =>
 	{
 		options.InvalidModelStateResponseFactory = InvalidModelStateResponseFactory.Create;
 	});
+
+builder.Services.AddFluentValidationAutoValidation().
+	AddValidatorsFromAssemblyContaining<UserCreationRequestValidator>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();

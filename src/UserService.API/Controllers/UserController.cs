@@ -55,7 +55,7 @@ public class UserController : ControllerBase
 	public async Task<IActionResult> Post(
 		[FromBody] UserCreationRequest model,
 		[FromServices] UserCreator userCreator)
-	{
+	{        
 		var result = await userCreator.Create(model);
 
 		return result.IsFailure
