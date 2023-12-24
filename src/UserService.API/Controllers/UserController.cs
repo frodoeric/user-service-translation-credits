@@ -76,7 +76,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Put(
         [FromRoute] long id,
         [FromBody] UserUpdateRequest model,
-        [FromServices] IAsyncRepository repository,
         [FromServices] UserUpdater userUpdater)
     {
         var updateResult = await userUpdater.Update(id, model);
