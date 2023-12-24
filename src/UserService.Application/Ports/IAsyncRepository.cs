@@ -16,7 +16,10 @@ public interface IAsyncRepository
 
 	void Add<T>(T entity) where T : class;
 
-	void Remove<T>(T entity) where T : class;
+    public void Update<T>(T entity) where T : class;
+
+
+    void Remove<T>(T entity) where T : class;
 
 	Task CommitChanges();
 }

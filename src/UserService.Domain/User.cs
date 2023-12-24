@@ -29,6 +29,43 @@ public class User : Entity
         return Result.Success<User, Error>(user);
     }
 
+    public Result<User, Error> UpdateName(Name newName)
+    {
+        if (newName == null)
+        {
+            return Result.Failure<User, Error>(new Error("Name cannot be null"));
+        }
+
+        var allUsers = Repository.GetAll();
+
+        if (allUsers.Any(u => u.Name == this.Name && u.Id != this.Id))
+        {
+            return Result.Failure<User, Error>(
+                new UniqueConstraintViolationError(
+                    "Another user with the same Name already exists.", nameof(User), nameof(User.Name)));
+        }
+
+        this.Name = newName;
+        return Result.Success<User, Error>(this);
+    }
+
+    public Result<User, Error> UpdateEmail(Email newEmail)
+    {
+        if (newEmail == null)
+        {
+            return Result.Failure<User, Error>(new Error("Email cannot be null"));
+        }
+
+        if (Repository.GetAll().Any(u => u.Email == newEmail && u.Id != this.Id))
+        {
+            return Result.Failure<User, Error>(
+                new UniqueConstraintViolationError(
+                    "Email already in use by another user.", nameof(User), nameof(User.Email)));
+        }
+
+        this.Email = newEmail;
+        return Result.Success<User, Error>(this);
+    }
 
     protected User() { }
 }

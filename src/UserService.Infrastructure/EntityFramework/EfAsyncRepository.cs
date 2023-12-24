@@ -15,7 +15,7 @@ public class EfAsyncRepository : IAsyncRepository
 
 	public async Task<T?> Get<T>(object id) where T : class
 	{
-		return await Context.Set<T>().FindAsync(id); ;
+		return await Context.Set<T>().FindAsync(id);
 	}
 
 	public async Task<IEnumerable<T>> GetAll<T>() where T : class
@@ -40,7 +40,17 @@ public class EfAsyncRepository : IAsyncRepository
 		Context.Set<T>().Add(entity);
 	}
 
-	public void Remove<T>(T entity) where T : class
+    public void Update<T>(T entity) where T : class
+    {
+        var entry = Context.Entry(entity);
+        if (entry.State == EntityState.Detached)
+        {
+            Context.Set<T>().Attach(entity);
+        }
+        entry.State = EntityState.Modified;
+    }
+
+    public void Remove<T>(T entity) where T : class
 	{
 		Context.Set<T>().Remove(entity);
 	}
