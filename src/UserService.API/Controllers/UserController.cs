@@ -62,4 +62,26 @@ public class UserController : ControllerBase
 			? BadRequest(ErrorResponse.From(result.Error))
 			: Ok(result.Value);
 	}
+
+    /// <summary>
+    /// Updates a user
+    /// </summary>
+    /// <response code="200">User successfully updated</response>
+    /// <response code="400">Validation error</response>
+    /// <response code="404">User not found</response>
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(long))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorResponse))]
+    public async Task<IActionResult> Put(
+        [FromRoute] long id,
+        [FromBody] UserUpdateRequest model,
+        [FromServices] UserUpdater userUpdater)
+    {
+        var updateResult = await userUpdater.Update(id, model);
+
+        return updateResult.IsFailure
+            ? BadRequest(ErrorResponse.From(updateResult.Error))
+            : Ok(updateResult.Value);
+    }
 }
