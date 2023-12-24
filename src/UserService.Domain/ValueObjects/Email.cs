@@ -16,7 +16,7 @@ public class Email : ValueObject<string>
             return Result.Failure<Email, Error>(new Error("Email is too long"));
 
         if (!Regex.IsMatch(email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
-            Result.Failure<Email>("Email is invalid");
+            return Result.Failure<Email, Error>(new Error("Email is invalid"));
 
         return Result.Success<Email, Error>(new Email(email));
     }
