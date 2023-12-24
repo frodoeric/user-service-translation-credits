@@ -79,12 +79,6 @@ public class UserController : ControllerBase
         [FromServices] IAsyncRepository repository,
         [FromServices] UserUpdater userUpdater)
     {
-        var user = await repository.Get<User>(id);
-        if (user == null)
-        {
-            return NotFound(ErrorResponse.EntityNotFound());
-        }
-
         var updateResult = await userUpdater.Update(id, model);
 
         return updateResult.IsFailure
