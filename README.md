@@ -70,3 +70,24 @@ docker-compose up userservice_local_db
 
 Then you can run both the unit and acceptance tests using the test runner in your IDE. The DB gets automatically migrated if needed when running the acceptance tests.
 
+## Future Work
+
+### Implementing CQRS (Command Query Responsibility Segregation)
+
+As UserService grows in complexity, implementing CQRS would be beneficial. This pattern involves separating read (query) operations from write (command) operations. Key benefits include:
+
+- **Performance Optimization**: Separate scaling for read and write operations.
+- **Complexity Management**: Easier to manage complex business logic by isolating commands from queries.
+- **Flexibility in Data Storage**: Different storage mechanisms can be used for read and write sides.
+- **Enhanced Scalability**: Independent scaling of reads and writes.
+- **Improved Security and Stability**: Separation increases system resilience.
+
+### Integrating Domain Events
+
+Adding Domain Events to the UserService will allow the system to react to significant domain changes more effectively. Benefits include:
+
+- **Decoupling of Components**: Components react to events, reducing direct dependencies.
+- **Reactivity and Side-Effect Management**: System becomes more reactive, managing side effects in response to events.
+- **Audit Trail and Event Logging**: Automatic creation of an audit trail for significant state changes.
+- **Ease of Extending Functionality**: Simplifies adding new features with minimal impact on existing code.
+- **Integration with External Systems**: Facilitates communication with external systems or services.
