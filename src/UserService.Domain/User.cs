@@ -98,5 +98,15 @@ public class User : Entity
         return Result.Success<User, Error>(this);
     }
 
+    public Result<User, Error> AddCredits(int credits)
+    {
+        var result = TranslationCredits.AddCredits(credits);
+        if (result.IsFailure)
+        {
+            return result.Error;
+        }
+        return Result.Success<User, Error>(this);
+    }
+
     protected User() { }
 }

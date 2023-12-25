@@ -11,6 +11,7 @@ public static class DependencyInjectionSetup
 		services.AddScoped(typeof(IAsyncRepository), typeof(EfAsyncRepository));
 		services.AddScoped<UserCreator>();
 		services.AddScoped<UserUpdater>();
+		services.AddScoped<UserCreditsService>();
 		//services.AddScoped<UserSynchronizer>();
 
 		//services.AddHttpClient<IUserProvider, SomeUserProvider>((svc, httpClient) =>
