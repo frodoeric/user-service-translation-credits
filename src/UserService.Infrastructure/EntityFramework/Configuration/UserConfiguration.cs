@@ -12,6 +12,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
 		builder.OwnsOne(u => u.Name).Property(e => e.Value).HasColumnName("Name");
 
-		builder.OwnsOne(u => u.Balance).Property(e => e.Value).HasColumnName("Balance");
+		builder.OwnsOne(u => u.TranslationCredits).Property(e => e.Value).HasColumnName("TranslationCredits");
 	}
 }
