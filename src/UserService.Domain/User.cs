@@ -8,11 +8,13 @@ public class User : Entity
 	public static IUserRepository Repository { get; set; }
 	public Name Name { get; protected set; }
 	public Email Email { get; protected set; }
+    public TranslationCredits Balance { get; private set; }
 
     public User(Name name, Email email)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Email = email ?? throw new ArgumentNullException(nameof(email));
+        Balance = new TranslationCredits(0);
     }
 
     public static Result<User, Error> Create(Name name, Email email)
@@ -66,6 +68,8 @@ public class User : Entity
         this.Email = newEmail;
         return Result.Success<User, Error>(this);
     }
+
+   
 
     protected User() { }
 }
