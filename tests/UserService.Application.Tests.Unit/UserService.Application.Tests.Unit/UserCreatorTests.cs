@@ -34,7 +34,7 @@ namespace UserService.Application.Tests.Unit
             Assert.True(result.IsSuccess);
             mockUserRepository.Verify(repo => repo.Add(It.IsAny<User>()), Times.Once);
             mockUserRepository.Verify(repo => repo.Save(), Times.Once);
-            mockCrmService.Verify(crm => crm.RegisterUser(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            mockCrmService.Verify(crm => crm.RegisterUser(It.IsAny<User>()), Times.Once);
         }
 
         [Theory]

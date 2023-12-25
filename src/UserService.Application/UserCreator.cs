@@ -42,7 +42,7 @@ public class UserCreator
         }
 
         userRepository.Add(user.Value);
-        await this.crmService.RegisterUser(user.Value.Name, user.Value.Email);
+        await this.crmService.RegisterUser(user.Value);
         userRepository.Save();
 
 		return Result.Success<User, Error>(user.Value);

@@ -29,19 +29,31 @@ public class UserUpdater
 
         if (model.Name != null)
         {
-            var nameResult = Name.Set(model.Name);
+            var nameResult = Name.Create(model.Name);
             if (nameResult.IsFailure)
             {
                 return Result.Failure<long, Error>(nameResult.Error);
+            }
+
+            updateResult = user.UpdateName(nameResult.Value);
+            if (updateResult.IsFailure)
+            {
+                return Result.Failure<long, Error>(updateResult.Error);
             }
         }
 
         if (model.Email != null)
         {
-            var emailResult = Email.Set(model.Email);
+            var emailResult = Email.Create(model.Email);
             if (emailResult.IsFailure)
             {
                 return Result.Failure<long, Error>(emailResult.Error);
+            }
+
+            updateResult = user.UpdateEmail(emailResult.Value);
+            if (updateResult.IsFailure)
+            {
+                return Result.Failure<long, Error>(updateResult.Error);
             }
         }
 
@@ -50,7 +62,7 @@ public class UserUpdater
 
         if (model.Name != null || model.Email != null)
         {
-            await crmService.UpdateUser(user.Id, user.Name, user.Email);
+            await crmService.UpdateUser(user);
         }
 
         return Result.Success<long, Error>(userId);

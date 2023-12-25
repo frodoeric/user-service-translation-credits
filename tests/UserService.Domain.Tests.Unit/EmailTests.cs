@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UserService.Domain.ValueObjects;
+﻿using UserService.Domain.ValueObjects;
 
 namespace UserService.Domain.Tests.Unit
 {
@@ -16,7 +11,7 @@ namespace UserService.Domain.Tests.Unit
             var validEmail = "test@example.com";
 
             // Act
-            var result = Email.Set(validEmail);
+            var result = Email.Create(validEmail);
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -29,7 +24,7 @@ namespace UserService.Domain.Tests.Unit
         public void Create_ShouldReturnFailure_WhenEmailIsEmpty(string invalidEmail)
         {
             // Act
-            var result = Email.Set(invalidEmail);
+            var result = Email.Create(invalidEmail);
 
             // Assert
             Assert.True(result.IsFailure);
@@ -43,7 +38,7 @@ namespace UserService.Domain.Tests.Unit
             var longEmail = new string('a', 101) + "@example.com";
 
             // Act
-            var result = Email.Set(longEmail);
+            var result = Email.Create(longEmail);
 
             // Assert
             Assert.True(result.IsFailure);
@@ -57,7 +52,7 @@ namespace UserService.Domain.Tests.Unit
         public void Create_ShouldReturnFailure_WhenEmailIsInvalid(string invalidEmail)
         {
             // Act
-            var result = Email.Set(invalidEmail);
+            var result = Email.Create(invalidEmail);
 
             // Assert
             Assert.True(result.IsFailure);

@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using CSharpFunctionalExtensions;
+using System.Xml.Linq;
 using UserService.Domain.Core;
 using UserService.Domain.ValueObjects;
 
@@ -20,8 +21,8 @@ public class User : Entity
 
     public static Result<User, Error> Create(string name, string email)
     {
-        var nameResult = Name.Set(name);
-        var emailResult = Email.Set(email);
+        var nameResult = Name.Create(name);
+        var emailResult = Email.Create(email);
 
         if (nameResult.IsFailure || emailResult.IsFailure)
         {
@@ -41,6 +42,60 @@ public class User : Entity
         var user = new User(nameResult.Value, emailResult.Value);
 
         return Result.Success<User, Error>(user);
+    }
+
+    public Result<User, Error> UpdateName(Name newName)
+    {
+        if (newName == null)
+        {
+            return Result.Failure<User, Error>(new Error("Name cannot be null"));
+        }
+        if (newName.Value == this.Name.Value)
+        {
+            return Result.Success<User, Error>(this);
+        }
+
+        var nameResult = Name.Create(newName.Value);
+
+        var allUsers = Repository.GetAll();
+
+        if (allUsers.Any(u => u.Name == this.Name && u.Id != this.Id))
+        {
+            return Result.Failure<User, Error>(
+                new UniqueConstraintViolationError(
+                    "Another user with the same Name already exists.", nameof(User), nameof(User.Name)));
+        }
+
+        this.Name = nameResult.Value;
+        return Result.Success<User, Error>(this);
+    }
+
+    public Result<User, Error> UpdateEmail(Email newEmail)
+    {
+        if (newEmail == null)
+        {
+            return Result.Failure<User, Error>(new Error("Email cannot be null"));
+        }
+        if (newEmail.Value == this.Email.Value)
+        {
+            return Result.Success<User, Error>(this);
+        }
+
+        var emailResult = Email.Create(newEmail.Value);
+        if (emailResult.IsFailure)
+        {
+            return emailResult.Error;
+        }
+
+        if (Repository.GetAll().Any(u => u.Email == newEmail && u.Id != this.Id))
+        {
+            return Result.Failure<User, Error>(
+                new UniqueConstraintViolationError(
+                    "Email already in use by another user.", nameof(User), nameof(User.Email)));
+        }
+
+        this.Email = emailResult.Value;
+        return Result.Success<User, Error>(this);
     }
 
     protected User() { }

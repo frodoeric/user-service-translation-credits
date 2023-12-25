@@ -22,4 +22,8 @@
     <Using Include="UserService.Domain" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
