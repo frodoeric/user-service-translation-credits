@@ -16,7 +16,7 @@ namespace UserService.Domain.Tests.Unit
             var validEmail = "test@example.com";
 
             // Act
-            var result = Email.Create(validEmail);
+            var result = Email.Set(validEmail);
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -29,7 +29,7 @@ namespace UserService.Domain.Tests.Unit
         public void Create_ShouldReturnFailure_WhenEmailIsEmpty(string invalidEmail)
         {
             // Act
-            var result = Email.Create(invalidEmail);
+            var result = Email.Set(invalidEmail);
 
             // Assert
             Assert.True(result.IsFailure);
@@ -43,7 +43,7 @@ namespace UserService.Domain.Tests.Unit
             var longEmail = new string('a', 101) + "@example.com";
 
             // Act
-            var result = Email.Create(longEmail);
+            var result = Email.Set(longEmail);
 
             // Assert
             Assert.True(result.IsFailure);
@@ -57,7 +57,7 @@ namespace UserService.Domain.Tests.Unit
         public void Create_ShouldReturnFailure_WhenEmailIsInvalid(string invalidEmail)
         {
             // Act
-            var result = Email.Create(invalidEmail);
+            var result = Email.Set(invalidEmail);
 
             // Assert
             Assert.True(result.IsFailure);

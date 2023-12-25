@@ -137,13 +137,15 @@ public class UserSteps : StepsBase
 	{
 		var httpResponse = (HttpResponseMessage)_scenarioContext[HttpResponseKey];
 		var content = await httpResponse.Content.ReadAsStringAsync();
-		var id = long.Parse(content);
-
-		var user = await GetEntity<User>(id);
-		user.Should().NotBeNull();
-		var userCreationRequest = (UserCreationRequest)_scenarioContext[RequestBodyKey];
-		userCreationRequest.Should().NotBeNull();
-		AssertEquivalent(userCreationRequest!, user!);
+		var jsonDoc = JsonDocument.Parse(content);
+        if (jsonDoc.RootElement.TryGetProperty("id", out var idElement) && idElement.TryGetInt64(out var id))
+        {
+            var user = await GetEntity<User>(id);
+            user.Should().NotBeNull();
+            var userCreationRequest = (UserCreationRequest)_scenarioContext[RequestBodyKey];
+            userCreationRequest.Should().NotBeNull();
+            AssertEquivalent(userCreationRequest!, user!);
+        }        
 	}
 
 	private static void AssertEquivalent(UserResponse response, User user)

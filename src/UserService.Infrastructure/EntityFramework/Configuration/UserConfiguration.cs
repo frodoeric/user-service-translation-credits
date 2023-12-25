@@ -11,5 +11,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.OwnsOne(u => u.Email).HasIndex(u => u.Value).IsUnique();
 
 		builder.OwnsOne(u => u.Name).Property(e => e.Value).HasColumnName("Name");
+
+		builder.OwnsOne(u => u.Balance).Property(e => e.Value).HasColumnName("Balance");
 	}
 }

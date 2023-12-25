@@ -4,8 +4,8 @@ namespace UserService.Tests.Shared
 {
     public class UserBuilder
 	{
-        private Email email = Email.Create(UniqueEmailGenerator.Generate()).Value;
-		private Name name = Name.Create("Testy").Value;
+        private Email email = Email.Set(UniqueEmailGenerator.Generate()).Value;
+		private Name name = Name.Set("Testy").Value;
 
 		public User Build() => new(name, email);
 

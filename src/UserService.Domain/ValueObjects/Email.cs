@@ -7,7 +7,7 @@ public class Email : ValueObject<string>
 {
     protected Email(string value) : base(value) { }
 
-    public static Result<Email, Error> Create(string email)
+    public static Result<Email, Error> Set(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
             return Result.Failure<Email, Error>(new Error("Email can't be empty"));

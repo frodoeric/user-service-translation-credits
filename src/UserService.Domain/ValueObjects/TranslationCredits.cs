@@ -4,13 +4,10 @@ using UserService.Domain.Core;
 
 namespace UserService.Domain.ValueObjects
 {
-    public class TranslationCredits : ValueObject
+    public class TranslationCredits : ValueObject<int>
     {
-        public int Balance { get; private set; }
-
-        public TranslationCredits(int balance)
+        public TranslationCredits(int value) : base(value)
         {
-            Balance = balance;
         }
 
         public Result<TranslationCredits, Error> SubtractCredits(int credits)
@@ -20,12 +17,12 @@ namespace UserService.Domain.ValueObjects
                 return Result.Failure<TranslationCredits, Error>(new Error("Credits must be greater than 0"));
             }
 
-            if (this.Balance < credits)
+            if (Value < credits)
             {
                 return Result.Failure<TranslationCredits, Error>(new Error("Insufficient credits"));
             }
 
-            this.Balance -= credits;
+            Value -= credits;
             return Result.Success<TranslationCredits, Error>(this);
         }
 
@@ -36,13 +33,8 @@ namespace UserService.Domain.ValueObjects
                 return Result.Failure<TranslationCredits, Error>(new Error("Credits must be greater than 0"));
             }
 
-            this.Balance += credits;
+            Value += credits;
             return Result.Success<TranslationCredits, Error>(this);
-        }
-
-        protected override IEnumerable<IComparable> GetEqualityComponents()
-        {
-            yield return Balance;
         }
     }
 }

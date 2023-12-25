@@ -9,7 +9,7 @@ namespace UserService.Domain.Test.Unit
 		public void CanBeCreated()
 		{
 			// Arrange, Act
-			var result = Name.Create("Robert Lewandosky");
+			var result = Name.Set("Robert Lewandosky");
 
 			// Assert
 			result.Should().BeSuccess();
@@ -19,7 +19,7 @@ namespace UserService.Domain.Test.Unit
 		public void CannotBeEmpty()
 		{
 			// Arrange, Act
-			var result = Name.Create("");
+			var result = Name.Set("");
 
 			// Assert
 			result.Should().BeFailure();
@@ -32,7 +32,7 @@ namespace UserService.Domain.Test.Unit
 			var name = string.Concat(Enumerable.Repeat("a", 101));
 
 			// Act
-			var result = Name.Create(name);
+			var result = Name.Set(name);
 
 			// Assert
 			result.Should().BeFailure();

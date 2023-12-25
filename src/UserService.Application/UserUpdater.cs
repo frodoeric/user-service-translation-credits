@@ -29,31 +29,19 @@ public class UserUpdater
 
         if (model.Name != null)
         {
-            var nameResult = Name.Create(model.Name);
+            var nameResult = Name.Set(model.Name);
             if (nameResult.IsFailure)
             {
                 return Result.Failure<long, Error>(nameResult.Error);
-            }
-
-            updateResult = user.UpdateName(nameResult.Value);
-            if (updateResult.IsFailure)
-            {
-                return Result.Failure<long, Error>(updateResult.Error);
             }
         }
 
         if (model.Email != null)
         {
-            var emailResult = Email.Create(model.Email);
+            var emailResult = Email.Set(model.Email);
             if (emailResult.IsFailure)
             {
                 return Result.Failure<long, Error>(emailResult.Error);
-            }
-
-            updateResult = user.UpdateEmail(emailResult.Value);
-            if (updateResult.IsFailure)
-            {
-                return Result.Failure<long, Error>(updateResult.Error);
             }
         }
 
