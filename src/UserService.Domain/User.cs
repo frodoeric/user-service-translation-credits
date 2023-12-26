@@ -7,7 +7,6 @@ namespace UserService.Domain;
 
 public class User : Entity
 {
-	public static IUserRepository Repository { get; set; }
 	public Name Name { get; protected set; }
 	public Email Email { get; protected set; }
     public TranslationCredits TranslationCredits { get; protected set; }
@@ -57,15 +56,6 @@ public class User : Entity
 
         var nameResult = Name.Create(newName.Value);
 
-        var allUsers = Repository.GetAll();
-
-        if (allUsers.Any(u => u.Name == this.Name && u.Id != this.Id))
-        {
-            return Result.Failure<User, Error>(
-                new UniqueConstraintViolationError(
-                    "Another user with the same Name already exists.", nameof(User), nameof(User.Name)));
-        }
-
         this.Name = nameResult.Value;
         return Result.Success<User, Error>(this);
     }
@@ -87,13 +77,6 @@ public class User : Entity
             return emailResult.Error;
         }
 
-        if (Repository.GetAll().Any(u => u.Email == newEmail && u.Id != this.Id))
-        {
-            return Result.Failure<User, Error>(
-                new UniqueConstraintViolationError(
-                    "Email already in use by another user.", nameof(User), nameof(User.Email)));
-        }
-
         this.Email = emailResult.Value;
         return Result.Success<User, Error>(this);
     }
@@ -108,5 +91,15 @@ public class User : Entity
         return Result.Success<User, Error>(this);
     }
 
-    protected User() { }
+    public Result<User, Error> SubtractCredits(int credits)
+    {
+        var result = TranslationCredits.SubtractCredits(credits);
+        if (result.IsFailure)
+        {
+            return result.Error;
+        }
+        return Result.Success<User, Error>(this);
+    }
+
+    protected User(Result<Name, Error> result) { }
 }

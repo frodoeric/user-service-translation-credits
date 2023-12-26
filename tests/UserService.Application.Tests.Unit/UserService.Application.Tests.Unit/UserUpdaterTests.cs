@@ -1,10 +1,4 @@
 ﻿using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UserService.Application.Models;
 using UserService.Domain.ValueObjects;
 using UserService.Domain;
 using UserService.Infrastructure.Services;
@@ -32,7 +26,7 @@ namespace UserService.Application.Tests.Unit
             var userId = 1;
             var userRequest = new UserUpdateRequest { Name = "Robert Lewandosky", Email = "test@example.com" };
 
-            var oldUser = new Domain.User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
 
             mockUserRepository.Setup(repo => repo.Get(userId)).Returns(oldUser);
             mockUserRepository.Setup(repo => repo.Update(oldUser));
@@ -43,7 +37,7 @@ namespace UserService.Application.Tests.Unit
 
             // Assert
             Assert.True(result.IsSuccess);
-            mockUserRepository.Verify(repo => repo.Update(It.IsAny<Domain.User>()), Times.Once);
+            mockUserRepository.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
             mockUserRepository.Verify(repo => repo.Save(), Times.Once);
             mockCrmService.Verify(crm => crm.UpdateUser(It.IsAny<User>()), Times.Once);
         }
@@ -57,7 +51,7 @@ namespace UserService.Application.Tests.Unit
         {
             // Arrange
             var userData = new UserUpdateRequest { Name = name, Email = email };
-            var user = new Domain.User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var user = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
 
             mockUserRepository.Setup(repo => repo.Get(1)).Returns(user);
             mockUserRepository.Setup(repo => repo.Update(user));

@@ -19,8 +19,6 @@ public class UserCreator
 
     public async Task<Result<User, Error>> Create(UserData model)
 	{
-        User.Repository = this.userRepository; // Get user repository ready in User
-
 		var user = User.Create(name: model.Name, email: model.Email);
 
         if (user.IsFailure)

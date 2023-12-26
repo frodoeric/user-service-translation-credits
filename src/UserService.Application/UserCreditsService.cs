@@ -1,6 +1,4 @@
-﻿using UserService.Application.Models;
-using UserService.Domain.Core;
-using UserService.Domain;
+﻿using UserService.Domain.Core;
 using UserService.Infrastructure.Services;
 using UserService.Domain.ValueObjects;
 

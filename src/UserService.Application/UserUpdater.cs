@@ -25,8 +25,6 @@ public class UserUpdater
 
         Result<User, Error> updateResult;
 
-        User.Repository = this.userRepository;
-
         if (model.Name != null)
         {
             var nameResult = Name.Create(model.Name);

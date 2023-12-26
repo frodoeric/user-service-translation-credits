@@ -1,7 +1,4 @@
-﻿using System.Net.Http;
-using System.Net.Http.Json;
-using UserService.Application.Models;
-using UserService.Domain.ValueObjects;
+﻿using System.Net.Http.Json;
 
 namespace UserService.Infrastructure.Services
 {
