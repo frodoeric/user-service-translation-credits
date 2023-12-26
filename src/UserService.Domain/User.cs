@@ -9,11 +9,14 @@ public class User : Entity
 	public Email Email { get; protected set; }
     public TranslationCredits TranslationCredits { get; protected set; }
 
+    private int creditsSpent;
+
     public User(Name name, Email email)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Email = email ?? throw new ArgumentNullException(nameof(email));
         TranslationCredits = new TranslationCredits(0);
+        creditsSpent = 0;
     }
 
     public static Result<User, Error> Create(string name, string email)
@@ -79,6 +82,15 @@ public class User : Entity
         return Result.Success<User, Error>(this);
     }
 
+    public void SpendCredits(int credits)
+    {
+        var result = TranslationCredits.SpendCredits(credits);
+        if (result.IsSuccess)
+        {
+            creditsSpent += credits;
+        }
+    }
+
     public Result<User, Error> AddCredits(int credits)
     {
         var result = TranslationCredits.AddCredits(credits);
@@ -99,5 +111,27 @@ public class User : Entity
         return Result.Success<User, Error>(this);
     }
 
+    public UserTier Tier => DetermineTier();
+
+    private UserTier DetermineTier()
+    {
+        if (TranslationCredits.Value >= 1000)
+        {
+            return UserTier.Special;
+        }
+        if (TranslationCredits.Value >= 100)
+        {
+            return UserTier.Advanced;
+        }
+        return UserTier.Sporadic;
+    }
+
     protected User(Result<Name, Error> result) { }
+}
+
+public enum UserTier
+{
+    Sporadic,
+    Advanced,
+    Special
 }
