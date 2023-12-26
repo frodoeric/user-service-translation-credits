@@ -31,6 +31,27 @@ namespace UserService.Application
 
             userRepository.Update(user);
             await crmService.UpdateUser(user);
+            userRepository.Save();
+            return Result.Success<TranslationCredits, Error>(user.TranslationCredits);
+        }
+
+        public async Task<Result<TranslationCredits, Error>> SpendCredits(long userId, int credits)
+        {
+            var user = userRepository.Get(userId);
+            if (user == null)
+            {
+                return Result.Failure<TranslationCredits, Error>(new Error("User not found"));
+            }
+
+            var result = user.TranslationCredits.SpendCredits(credits);
+            if (result.IsFailure)
+            {
+                return Result.Failure<TranslationCredits, Error>(result.Error);
+            }
+
+            userRepository.Update(user);
+            await crmService.UpdateUser(user);
+            userRepository.Save();
             return Result.Success<TranslationCredits, Error>(user.TranslationCredits);
         }
 

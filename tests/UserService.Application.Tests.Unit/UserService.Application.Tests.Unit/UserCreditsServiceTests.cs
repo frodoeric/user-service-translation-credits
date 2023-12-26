@@ -30,13 +30,14 @@ namespace UserService.Application.Tests.Unit
             var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var creditsToAdd = 10;
-            var result = await userCreditsService.AddCredits(1, creditsToAdd);
+            var request = new TranslationCreditsRequest() { Credits = 10 };
+            var result = await userCreditsService.AddCredits(1, request.Credits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
             mockUserRepository.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
             mockCrmService.Verify(crm => crm.UpdateUser(It.IsAny<User>()), Times.Once);
+            mockUserRepository.Verify(repo => repo.Save(), Times.Once);
         }
 
         [Fact]
@@ -46,20 +47,22 @@ namespace UserService.Application.Tests.Unit
             var request = new TranslationCreditsRequest() { Credits = 10 };
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var result = await userCreditsService.AddCredits(1, 10);
+            var result = await userCreditsService.AddCredits(1, request.Credits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
             mockUserRepository.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
             mockCrmService.Verify(crm => crm.UpdateUser(It.IsAny<User>()), Times.Once);
+            mockUserRepository.Verify(repo => repo.Save(), Times.Once);
         }
 
         [Fact]
         public async Task AddCredits_ShouldReturnFailure_WhenUserNotFound()
         {
+            var request = new TranslationCreditsRequest() { Credits = 10 };
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns((User)null);
 
-            var result = await userCreditsService.AddCredits(1, 10);
+            var result = await userCreditsService.AddCredits(1, request.Credits);
 
             Assert.True(result.IsFailure);
             Assert.Equal("User not found", result.Error.Message);
@@ -72,23 +75,25 @@ namespace UserService.Application.Tests.Unit
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var creditsToSubtract = 5;
-            var result = await userCreditsService.SubtractCredits(1, creditsToSubtract);
+            var request = new TranslationCreditsRequest() { Credits = 5 };
+            var result = await userCreditsService.SubtractCredits(1, request.Credits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
             mockUserRepository.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
             mockCrmService.Verify(crm => crm.UpdateUser(It.IsAny<User>()), Times.Once);
+            mockUserRepository.Verify(repo => repo.Save(), Times.Once);
         }
 
         [Fact]
         public async Task SubtractCredits_ShouldReturnSuccess_WhenUserExistsAndCreditsAreSubtracted()
         {
+            var request = new TranslationCreditsRequest() { Credits = 5 };
             var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var result = await userCreditsService.SubtractCredits(1, 5);
+            var result = await userCreditsService.SubtractCredits(1, request.Credits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
@@ -97,9 +102,85 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SubtractCredits_ShouldReturnFailure_WhenUserNotFound()
         {
+            var request = new TranslationCreditsRequest() { Credits = 10 };
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns((User)null);
 
-            var result = await userCreditsService.SubtractCredits(1, 5);
+            var result = await userCreditsService.SubtractCredits(1, request.Credits);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal("User not found", result.Error.Message);
+        }
+
+        [Fact]
+        public async Task SubtractCredits_ShouldReturnSuccess_WhenInsufficientCredits()
+        {
+            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            oldUser.AddCredits(1);
+            mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
+
+            var request = new TranslationCreditsRequest() { Credits = 5 };
+            var result = await userCreditsService.SubtractCredits(1, request.Credits);
+
+            Assert.True(result.IsSuccess);
+            Assert.Equal(-4, oldUser.TranslationCredits.Value);
+            mockUserRepository.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
+            mockCrmService.Verify(crm => crm.UpdateUser(It.IsAny<User>()), Times.Once);
+            mockUserRepository.Verify(repo => repo.Save(), Times.Once);
+        }
+
+        [Fact]
+        public async Task SpendCredits_ShouldReturnFailure_WhenInsufficientCredits()
+        {
+            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            oldUser.AddCredits(1);
+            mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
+
+            var request = new TranslationCreditsRequest() { Credits = 5 };
+            var result = await userCreditsService.SpendCredits(1, request.Credits);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(1, oldUser.TranslationCredits.Value);
+            Assert.Equal("Insufficient credits.", result.Error.Message);
+        }
+
+        [Fact]
+        public async Task SpendCredits_ShouldReturnSuccess_WhenSufficientCredits()
+        {
+            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            oldUser.AddCredits(15);
+            mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
+
+            var request = new TranslationCreditsRequest() { Credits = 5 };
+            var result = await userCreditsService.SpendCredits(1, request.Credits);
+
+            Assert.True(result.IsSuccess);
+            Assert.Equal(10, oldUser.TranslationCredits.Value);
+            mockUserRepository.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
+            mockCrmService.Verify(crm => crm.UpdateUser(It.IsAny<User>()), Times.Once);
+            mockUserRepository.Verify(repo => repo.Save(), Times.Once);
+        }
+
+        [Fact]
+        public async Task SpendCredits_ShouldReturnSuccess_WhenUserExistsAndCreditsAreSubtracted()
+        {
+            var request = new TranslationCreditsRequest() { Credits = 5 };
+            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            oldUser.AddCredits(15);
+            mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
+
+            var result = await userCreditsService.SpendCredits(1, request.Credits);
+
+            Assert.True(result.IsSuccess);
+            Assert.Equal(10, oldUser.TranslationCredits.Value);
+        }
+
+        [Fact]
+        public async Task SpendCredits_ShouldReturnFailure_WhenUserNotFound()
+        {
+            var request = new TranslationCreditsRequest() { Credits = 10 };
+            mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns((User)null);
+
+            var result = await userCreditsService.SpendCredits(1, request.Credits);
 
             Assert.True(result.IsFailure);
             Assert.Equal("User not found", result.Error.Message);

@@ -1,7 +1,6 @@
 using UserService.API.Contract;
 using UserService.API.Contract.Users;
 using UserService.Application;
-using UserService.Application.Models;
 using UserService.Application.Ports;
 using Microsoft.AspNetCore.Mvc;
 

@@ -23,7 +23,7 @@ namespace UserService.Domain.Tests.Unit
             var result = credits.AddCredits(amount);
 
             Assert.True(result.IsFailure);
-            Assert.Equal("Credits must be greater than 0", result.Error.Message);
+            Assert.Equal("Credits must be greater than 0.", result.Error.Message);
         }
 
         [Fact]
@@ -37,14 +37,37 @@ namespace UserService.Domain.Tests.Unit
         }
 
         [Fact]
-        public void SubtractCredits_ShouldFail_WhenInsufficientCredits()
+        public void SpendCredits_ShouldFail_WhenInsufficientCredits()
+        {
+            var credits = new TranslationCredits(5);
+            var result = credits.SpendCredits(10);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal("Insufficient credits.", result.Error.Message);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void SpendCredits_ShouldFail_WhenNonPositiveAmount(int amount)
+        {
+            var credits = new TranslationCredits(10);
+            var result = credits.SpendCredits(amount);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal("Credits must be greater than 0.", result.Error.Message);
+        }
+
+        [Fact]
+        public void SubtractCredits_ShouldDecrease_WhenInsufficientCredits()
         {
             var credits = new TranslationCredits(5);
             var result = credits.SubtractCredits(10);
 
-            Assert.True(result.IsFailure);
-            Assert.Equal("Insufficient credits", result.Error.Message);
+            Assert.True(result.IsSuccess);
+            Assert.Equal(-5, credits.Value);
         }
+
 
         [Theory]
         [InlineData(0)]
@@ -55,7 +78,7 @@ namespace UserService.Domain.Tests.Unit
             var result = credits.SubtractCredits(amount);
 
             Assert.True(result.IsFailure);
-            Assert.Equal("Credits must be greater than 0", result.Error.Message);
+            Assert.Equal("Credits must be greater than 0.", result.Error.Message);
         }
     }
 

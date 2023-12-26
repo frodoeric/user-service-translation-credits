@@ -1,8 +1,6 @@
-﻿using UserService.Application.Models;
-
-namespace UserService.API.Contract.Users
+﻿namespace UserService.API.Contract.Users
 {
-    public class TranslationCreditsRequest : UserData
+    public class TranslationCreditsRequest
     {
         public int Credits { get; set; }
     }

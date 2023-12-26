@@ -1,6 +1,4 @@
-﻿
-using CSharpFunctionalExtensions;
-using UserService.Domain.Core;
+﻿using UserService.Domain.Core;
 
 namespace UserService.Domain.ValueObjects
 {
@@ -10,16 +8,27 @@ namespace UserService.Domain.ValueObjects
         {
         }
 
-        public Result<TranslationCredits, Error> SubtractCredits(int credits)
+        public Result<TranslationCredits, Error> SpendCredits(int credits)
         {
-            if (credits <= 0)
+            if (!IsGreaterThanZero(credits))
             {
-                return Result.Failure<TranslationCredits, Error>(new Error("Credits must be greater than 0"));
+                return GreaterThanZeroError();
             }
 
-            if (Value < credits)
+            if (!IsInsufficentCredits(credits))
             {
-                return Result.Failure<TranslationCredits, Error>(new Error("Insufficient credits"));
+                return InsufficentCreditsError();
+            }
+
+            Value -= credits;
+            return Result.Success<TranslationCredits, Error>(this);
+        }
+
+        public Result<TranslationCredits, Error> SubtractCredits(int credits)
+        {
+            if (!IsGreaterThanZero(credits))
+            {
+                return GreaterThanZeroError();
             }
 
             Value -= credits;
@@ -28,13 +37,37 @@ namespace UserService.Domain.ValueObjects
 
         public Result<TranslationCredits, Error> AddCredits(int credits)
         {
-            if (credits <= 0)
+            if (!IsGreaterThanZero(credits))
             {
-                return Result.Failure<TranslationCredits, Error>(new Error("Credits must be greater than 0"));
+                return GreaterThanZeroError();
             }
 
             Value += credits;
             return Result.Success<TranslationCredits, Error>(this);
+        }
+
+        private Result<TranslationCredits, Error> GreaterThanZeroError()
+        {
+            return Result.Failure<TranslationCredits, Error>(
+            new TranslationCreditError(
+                "Credits must be greater than 0.", nameof(TranslationCredits), nameof(Value)));
+        }
+
+        private Result<TranslationCredits, Error> InsufficentCreditsError()
+        {
+            return Result.Failure<TranslationCredits, Error>(
+            new TranslationCreditError(
+                "Insufficient credits.", nameof(TranslationCredits), nameof(Value)));
+        }
+
+        private static bool IsGreaterThanZero(int credits)
+        {
+            return credits > 0;
+        }
+
+        private bool IsInsufficentCredits(int credits)
+        {
+            return credits < Value;
         }
     }
 }
