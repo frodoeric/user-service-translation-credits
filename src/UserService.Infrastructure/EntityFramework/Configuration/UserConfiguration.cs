@@ -23,10 +23,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                    email => email.Value,
                    email => Email.Create(email).Value);
 
-        // Storing TranslationCredits as an integer
         builder.Property(u => u.TranslationCredits)
                .HasConversion(
                    credits => credits.Value,
                    credits => new TranslationCredits(credits));
+
+        builder.Property(u => u.TotalCreditsSpent);
     }
 }

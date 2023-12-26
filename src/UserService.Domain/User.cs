@@ -5,15 +5,18 @@ namespace UserService.Domain;
 
 public class User : Entity
 {
-	public Name Name { get; protected set; }
-	public Email Email { get; protected set; }
-    public TranslationCredits TranslationCredits { get; protected set; }
+	public Name Name { get; private set; }
+	public Email Email { get; private set; }
+    public TranslationCredits TranslationCredits { get; private set; }
+    public int TotalCreditsSpent { get; private set; }
+    public UserTier Tier => DetermineTier();
 
     public User(Name name, Email email)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Email = email ?? throw new ArgumentNullException(nameof(email));
         TranslationCredits = new TranslationCredits(0);
+        TotalCreditsSpent = 0;
     }
 
     public static Result<User, Error> Create(string name, string email)
@@ -79,6 +82,17 @@ public class User : Entity
         return Result.Success<User, Error>(this);
     }
 
+    public Result<User, Error> SpendCredits(int credits)
+    {
+        var result = TranslationCredits.SpendCredits(credits);
+        if (result.IsFailure)
+        {
+            return result.Error;
+        }
+        TotalCreditsSpent += credits;
+        return Result.Success<User, Error>(this);
+    }
+
     public Result<User, Error> AddCredits(int credits)
     {
         var result = TranslationCredits.AddCredits(credits);
@@ -97,6 +111,19 @@ public class User : Entity
             return result.Error;
         }
         return Result.Success<User, Error>(this);
+    }
+
+    private UserTier DetermineTier()
+    {
+        if (TotalCreditsSpent >= 1000)
+        {
+            return UserTier.Special;
+        }
+        if (TotalCreditsSpent >= 100)
+        {
+            return UserTier.Advanced;
+        }
+        return UserTier.Sporadic;
     }
 
     protected User(Result<Name, Error> result) { }
