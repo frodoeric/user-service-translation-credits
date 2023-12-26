@@ -1,6 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using System.Xml.Linq;
-using UserService.Domain.Core;
+﻿using UserService.Domain.Core;
 using UserService.Domain.ValueObjects;
 
 namespace UserService.Domain;

@@ -1,8 +1,6 @@
 using Moq;
 using UserService.API.Contract.Users;
-using UserService.Application.Models;
 using UserService.Domain;
-using UserService.Domain.ValueObjects;
 using UserService.Infrastructure.Services;
 
 namespace UserService.Application.Tests.Unit
