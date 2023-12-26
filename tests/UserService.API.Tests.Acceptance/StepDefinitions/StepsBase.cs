@@ -55,4 +55,19 @@ public class StepsBase
 
 		return await repository.GetWhere(predicate, include);
 	}
+
+    protected async Task UpdateEntitiesWhere<T, TId>(Expression<Func<T, bool>> predicate, Action<T> updateAction)
+        where T : Entity<TId>
+    {
+        using var scope = _fixture.ServiceProvider.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<IAsyncRepository>();
+
+        var entities = await repository.GetWhere(predicate);
+        foreach (var entity in entities)
+        {
+            updateAction(entity);
+        }
+
+        await repository.CommitChanges();
+    }
 }

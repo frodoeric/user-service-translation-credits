@@ -52,32 +52,25 @@ public class UserSteps : StepsBase
 		_scenarioContext[RequestBodyKey] = givenRequest;
 	}
 
-	[Given(@"a UserCreationRequest")]
+    [Given(@"a UserCreationRequest")]
 	public void GivenAUserCreationRequest()
 	{
 		var givenRequest = new UserCreationRequestBuilder()
 			.Build();
-
 		_scenarioContext[RequestBodyKey] = givenRequest;
 	}
 
-	[When(@"I send a (.*) request to (.*)")]
-	public async Task ISendARequestTo(string verb, string path)
-	{
-		if (path.Contains("{id}"))
-			path = path.Replace("{id}", _scenarioContext[IdKey].ToString());
+    [Given(@"a UserUpdateRequest with invalid data")]
+    public void GivenAUserUpdateRequestWithInvalidData()
+    {
+        var updateRequest = new UserUpdateRequest
+        {
+            // Set invalid data
+        };
+        _scenarioContext[RequestBodyKey] = updateRequest;
+    }
 
-		var request = new HttpRequestMessage(new HttpMethod(verb), path);
-
-		if (verb.ToLower() == "post")
-			request.Content = JsonContent.Create(_scenarioContext[RequestBodyKey]);
-
-		var response = await _fixture.HttpClient.SendAsync(request);
-
-		_scenarioContext[HttpResponseKey] = response;
-	}
-
-	[Then(@"I get a Bad Request response with an error message")]
+    [Then(@"I get a Bad Request response with an error message")]
 	public void ThenIGetABadRequestReponseWithAnErrorMessage()
 	{
 		var httpResponse = (HttpResponseMessage)_scenarioContext[HttpResponseKey];
@@ -148,7 +141,49 @@ public class UserSteps : StepsBase
         }        
 	}
 
-	private static void AssertEquivalent(UserResponse response, User user)
+    [Then(@"the user is updated")]
+    public async Task ThenTheUserIsUpdated()
+    {
+        var httpResponse = (HttpResponseMessage)_scenarioContext[HttpResponseKey];
+        var content = await httpResponse.Content.ReadAsStringAsync();
+        var jsonDoc = JsonDocument.Parse(content);
+        if (jsonDoc.RootElement.TryGetProperty("id", out var idElement) && idElement.TryGetInt64(out var id))
+        {
+            var user = await GetEntity<User>(id);
+            user.Should().NotBeNull();
+            var userUpdateRequest = (UserUpdateRequest)_scenarioContext[RequestBodyKey];
+            userUpdateRequest.Should().NotBeNull();
+            AssertEquivalent(userUpdateRequest!, user!);
+        }
+    }
+
+    [Then(@"I get a Not Found response")]
+    public void ThenIGetANotFoundResponse()
+    {
+        var response = _scenarioContext[HttpResponseKey] as HttpResponseMessage;
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [When(@"I send a (.*) request to (.*)")]
+    public async Task ISendARequestTo(string verb, string path)
+    {
+        if (path.Contains("{id}"))
+            path = path.Replace("{id}", _scenarioContext[IdKey].ToString());
+
+        var request = new HttpRequestMessage(new HttpMethod(verb), path);
+
+        if (verb.ToLower() == "post")
+            request.Content = JsonContent.Create(_scenarioContext[RequestBodyKey]);
+
+        if(verb.ToLower() == "put")
+            request.Content = JsonContent.Create(_scenarioContext[RequestBodyKey]);
+
+        var response = await _fixture.HttpClient.SendAsync(request);
+
+        _scenarioContext[HttpResponseKey] = response;
+    }
+
+    private static void AssertEquivalent(UserResponse response, User user)
 	{
 		response.Id.Should().Be(user.Id);
 		response.Name.Should().Be(user.Name);
@@ -160,4 +195,10 @@ public class UserSteps : StepsBase
 		request.Name.Should().Be(user.Name);
 		request.Email.Should().Be(user.Email);
 	}
+
+    private static void AssertEquivalent(UserUpdateRequest request, User user)
+    {
+        request.Name.Should().Be(user.Name);
+        request.Email.Should().Be(user.Email);
+    }
 }
