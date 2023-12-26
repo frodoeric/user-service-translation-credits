@@ -1,4 +1,5 @@
-﻿using UserService.Domain.Core;
+﻿using CSharpFunctionalExtensions;
+using UserService.Domain.Core;
 
 namespace UserService.Domain.ValueObjects;
 

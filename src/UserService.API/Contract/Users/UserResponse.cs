@@ -5,13 +5,15 @@ public class UserResponse
 	public long Id { get; set; }
 	public string Name { get; set; } = null!;
 	public string Email { get; set; } = null!;
+	public int TranslationCredits { get; set; }
 
 	public static UserResponse From(User user) =>
 		new UserResponse
 		{
 			Id = user.Id,
 			Name = user.Name,
-			Email = user.Email
+			Email = user.Email,
+			TranslationCredits = user.TranslationCredits
 		};
 
 }

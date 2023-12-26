@@ -1,10 +1,4 @@
 ﻿using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UserService.Application.Models;
 using UserService.Domain.ValueObjects;
 using UserService.Domain;
 using UserService.Infrastructure.Services;
@@ -45,7 +39,7 @@ namespace UserService.Application.Tests.Unit
             Assert.True(result.IsSuccess);
             mockUserRepository.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
             mockUserRepository.Verify(repo => repo.Save(), Times.Once);
-            mockCrmService.Verify(crm => crm.UpdateUser(It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            mockCrmService.Verify(crm => crm.UpdateUser(It.IsAny<User>()), Times.Once);
         }
 
         [Theory]

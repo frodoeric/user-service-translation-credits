@@ -1,5 +1,4 @@
 using UserService.Domain.ValueObjects;
-using Xunit;
 
 namespace UserService.Domain.Test.Unit
 {

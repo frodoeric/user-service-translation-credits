@@ -4,7 +4,7 @@ using UserService.Infrastructure.Services;
 using UserService.Infrastructure.Repositories;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using UserService.API.Contract.Users;
+using UserService.API.Contract.Users.Validator;
 
 var builder = WebApplication.CreateBuilder(args);
 

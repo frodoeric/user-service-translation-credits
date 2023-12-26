@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace UserService.API.Contract.Users
+namespace UserService.API.Contract.Users.Validator
 {
     public class UserCreationRequestValidator : AbstractValidator<UserCreationRequest>
     {

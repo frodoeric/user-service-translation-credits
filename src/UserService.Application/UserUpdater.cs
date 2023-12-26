@@ -25,8 +25,6 @@ public class UserUpdater
 
         Result<User, Error> updateResult;
 
-        User.Repository = this.userRepository;
-
         if (model.Name != null)
         {
             var nameResult = Name.Create(model.Name);
@@ -62,7 +60,7 @@ public class UserUpdater
 
         if (model.Name != null || model.Email != null)
         {
-            await crmService.UpdateUser(user.Id, user.Name, user.Email);
+            await crmService.UpdateUser(user);
         }
 
         return Result.Success<long, Error>(userId);

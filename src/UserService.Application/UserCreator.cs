@@ -1,4 +1,5 @@
-﻿using UserService.Application.Models;
+﻿using CSharpFunctionalExtensions;
+using UserService.Application.Models;
 using UserService.Domain.Core;
 using UserService.Domain.ValueObjects;
 using UserService.Infrastructure.Services;
@@ -16,37 +17,32 @@ public class UserCreator
         this.crmService = crmService;
     }
 
-    public async Task<Result<long, Error>> Create(UserData model)
+    public async Task<Result<User, Error>> Create(UserData model)
 	{
-		var nameResult = Name.Create(model.Name);
-		var emailResult = Email.Create(model.Email);
-
-        if (nameResult.IsFailure || emailResult.IsFailure)
-        {
-            var errors = new List<string>();
-            if (nameResult.IsFailure)
-            {
-                errors.Add(nameResult.Error.Message);
-            }
-            if (emailResult.IsFailure)
-            {
-                errors.Add(emailResult.Error.Message);
-            }
-            var combinedErrorMessage = string.Join(" ", errors);
-            return Result.Failure<long, Error>(new Error(combinedErrorMessage));
-        }
-
-        User.Repository = this.userRepository; // Get user repository ready in User
-
-		var user = User.Create(nameResult.Value, emailResult.Value);
+		var user = User.Create(name: model.Name, email: model.Email);
 
         if (user.IsFailure)
         {
-            return Result.Failure<long, Error>(user.Error);
+            return Result.Failure<User, Error>(user.Error);
         }
 
-        await this.crmService.RegisterUser(user.Value.Name, user.Value.Email);
+        var allUsers = userRepository.GetAll();
+        if (allUsers.Any(u => u.Email == model.Email))
+            return Result.Failure<User, Error>(
+                new UniqueConstraintViolationError(
+                    "User with given Email already exists.", nameof(User), nameof(User.Email)));
 
-		return Result.Success<long, Error>(user.Value.Id);
+        if (allUsers.Any(u => u.Name == model.Name && u.Id != user.Value.Id))
+        {
+            return Result.Failure<User, Error>(
+                new UniqueConstraintViolationError(
+                    "Another user with the same Name already exists.", nameof(User), nameof(User.Name)));
+        }
+
+        userRepository.Add(user.Value);
+        await this.crmService.RegisterUser(user.Value);
+        userRepository.Save();
+
+		return Result.Success<User, Error>(user.Value);
 	}
 }

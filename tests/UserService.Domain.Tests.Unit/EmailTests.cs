@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UserService.Domain.ValueObjects;
+﻿using UserService.Domain.ValueObjects;
 
 namespace UserService.Domain.Tests.Unit
 {
