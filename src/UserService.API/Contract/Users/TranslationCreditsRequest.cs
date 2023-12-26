@@ -2,6 +2,6 @@
 {
     public class TranslationCreditsRequest
     {
-        public int Credits { get; set; }
+        public int TranslationCredits { get; set; }
     }
 }

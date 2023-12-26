@@ -31,11 +31,11 @@ public class TranslationCreditsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddCredits(long userId, [FromBody] TranslationCreditsRequest request)
     {
-        var result = await _userCreditsService.AddCredits(userId, request.Credits);
+        var result = await _userCreditsService.AddCredits(userId, request.TranslationCredits);
 
         if (result.IsSuccess)
         {
-            return Ok(result.Value);
+            return Ok(CreditsResponse.From(result.Value));
         }
 
         if (result.Error.Message == "User not found")
@@ -60,11 +60,11 @@ public class TranslationCreditsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> SpendCredits(long userId, [FromBody] TranslationCreditsRequest request)
     {
-        var result = await _userCreditsService.SpendCredits(userId, request.Credits);
+        var result = await _userCreditsService.SpendCredits(userId, request.TranslationCredits);
 
         if (result.IsSuccess)
         {
-            return Ok(result.Value);
+            return Ok(CreditsResponse.From(result.Value));
         }
 
         if (result.Error.Message == "User not found")
@@ -89,11 +89,11 @@ public class TranslationCreditsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> SubtractCredits(long userId, [FromBody] TranslationCreditsRequest request)
     {
-        var result = await _userCreditsService.SubtractCredits(userId, request.Credits);
+        var result = await _userCreditsService.SubtractCredits(userId, request.TranslationCredits);
 
         if (result.IsSuccess)
         {
-            return Ok(result.Value);
+            return Ok(CreditsResponse.From(result.Value));
         }
 
         if (result.Error.Message == "User not found")

@@ -30,8 +30,8 @@ namespace UserService.Application.Tests.Unit
             var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var request = new TranslationCreditsRequest() { Credits = 10 };
-            var result = await userCreditsService.AddCredits(1, request.Credits);
+            var request = new TranslationCreditsRequest() { TranslationCredits = 10 };
+            var result = await userCreditsService.AddCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
@@ -44,10 +44,10 @@ namespace UserService.Application.Tests.Unit
         public async Task AddCredits_ShouldReturnSuccess_WhenUserExistsAndCreditsAreAdded()
         {
             var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
-            var request = new TranslationCreditsRequest() { Credits = 10 };
+            var request = new TranslationCreditsRequest() { TranslationCredits = 10 };
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var result = await userCreditsService.AddCredits(1, request.Credits);
+            var result = await userCreditsService.AddCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
@@ -59,10 +59,10 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task AddCredits_ShouldReturnFailure_WhenUserNotFound()
         {
-            var request = new TranslationCreditsRequest() { Credits = 10 };
+            var request = new TranslationCreditsRequest() { TranslationCredits = 10 };
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns((User)null);
 
-            var result = await userCreditsService.AddCredits(1, request.Credits);
+            var result = await userCreditsService.AddCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsFailure);
             Assert.Equal("User not found", result.Error.Message);
@@ -75,8 +75,8 @@ namespace UserService.Application.Tests.Unit
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var request = new TranslationCreditsRequest() { Credits = 5 };
-            var result = await userCreditsService.SubtractCredits(1, request.Credits);
+            var request = new TranslationCreditsRequest() { TranslationCredits = 5 };
+            var result = await userCreditsService.SubtractCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
@@ -88,12 +88,12 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SubtractCredits_ShouldReturnSuccess_WhenUserExistsAndCreditsAreSubtracted()
         {
-            var request = new TranslationCreditsRequest() { Credits = 5 };
+            var request = new TranslationCreditsRequest() { TranslationCredits = 5 };
             var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var result = await userCreditsService.SubtractCredits(1, request.Credits);
+            var result = await userCreditsService.SubtractCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
@@ -102,10 +102,10 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SubtractCredits_ShouldReturnFailure_WhenUserNotFound()
         {
-            var request = new TranslationCreditsRequest() { Credits = 10 };
+            var request = new TranslationCreditsRequest() { TranslationCredits = 10 };
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns((User)null);
 
-            var result = await userCreditsService.SubtractCredits(1, request.Credits);
+            var result = await userCreditsService.SubtractCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsFailure);
             Assert.Equal("User not found", result.Error.Message);
@@ -118,8 +118,8 @@ namespace UserService.Application.Tests.Unit
             oldUser.AddCredits(1);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var request = new TranslationCreditsRequest() { Credits = 5 };
-            var result = await userCreditsService.SubtractCredits(1, request.Credits);
+            var request = new TranslationCreditsRequest() { TranslationCredits = 5 };
+            var result = await userCreditsService.SubtractCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(-4, oldUser.TranslationCredits.Value);
@@ -135,8 +135,8 @@ namespace UserService.Application.Tests.Unit
             oldUser.AddCredits(1);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var request = new TranslationCreditsRequest() { Credits = 5 };
-            var result = await userCreditsService.SpendCredits(1, request.Credits);
+            var request = new TranslationCreditsRequest() { TranslationCredits = 5 };
+            var result = await userCreditsService.SpendCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsFailure);
             Assert.Equal(1, oldUser.TranslationCredits.Value);
@@ -150,8 +150,8 @@ namespace UserService.Application.Tests.Unit
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var request = new TranslationCreditsRequest() { Credits = 5 };
-            var result = await userCreditsService.SpendCredits(1, request.Credits);
+            var request = new TranslationCreditsRequest() { TranslationCredits = 5 };
+            var result = await userCreditsService.SpendCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
@@ -163,12 +163,12 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SpendCredits_ShouldReturnSuccess_WhenUserExistsAndCreditsAreSubtracted()
         {
-            var request = new TranslationCreditsRequest() { Credits = 5 };
+            var request = new TranslationCreditsRequest() { TranslationCredits = 5 };
             var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
-            var result = await userCreditsService.SpendCredits(1, request.Credits);
+            var result = await userCreditsService.SpendCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(10, oldUser.TranslationCredits.Value);
@@ -177,10 +177,10 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SpendCredits_ShouldReturnFailure_WhenUserNotFound()
         {
-            var request = new TranslationCreditsRequest() { Credits = 10 };
+            var request = new TranslationCreditsRequest() { TranslationCredits = 10 };
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns((User)null);
 
-            var result = await userCreditsService.SpendCredits(1, request.Credits);
+            var result = await userCreditsService.SpendCredits(1, request.TranslationCredits);
 
             Assert.True(result.IsFailure);
             Assert.Equal("User not found", result.Error.Message);

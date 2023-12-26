@@ -50,14 +50,14 @@ namespace UserService.Domain.ValueObjects
         {
             return Result.Failure<TranslationCredits, Error>(
             new TranslationCreditError(
-                "Credits must be greater than 0.", nameof(TranslationCredits), nameof(Value)));
+                "Credits must be greater than 0.", nameof(TranslationCredits)));
         }
 
         private Result<TranslationCredits, Error> InsufficentCreditsError()
         {
             return Result.Failure<TranslationCredits, Error>(
             new TranslationCreditError(
-                "Insufficient credits.", nameof(TranslationCredits), nameof(Value)));
+                "Insufficient credits.", nameof(TranslationCredits)));
         }
 
         private static bool IsGreaterThanZero(int credits)
@@ -67,7 +67,7 @@ namespace UserService.Domain.ValueObjects
 
         private bool IsInsufficentCredits(int credits)
         {
-            return credits < Value;
+            return credits <= Value;
         }
     }
 }
