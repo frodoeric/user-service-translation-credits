@@ -43,7 +43,7 @@ namespace UserService.Application
                 return Result.Failure<TranslationCredits, Error>(new Error("User not found"));
             }
 
-            var result = user.TranslationCredits.SpendCredits(credits);
+            var result = user.SpendCredits(credits);
             if (result.IsFailure)
             {
                 return Result.Failure<TranslationCredits, Error>(result.Error);
@@ -63,7 +63,7 @@ namespace UserService.Application
                 return Result.Failure<TranslationCredits, Error>(new Error("User not found"));
             }
 
-            var result = user.TranslationCredits.SubtractCredits(credits);
+            var result = user.SubtractCredits(credits);
             if (result.IsFailure)
             {
                 return Result.Failure<TranslationCredits, Error>(result.Error);

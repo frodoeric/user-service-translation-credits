@@ -60,14 +60,8 @@ namespace UserService.Domain.ValueObjects
                 "Insufficient credits.", nameof(TranslationCredits)));
         }
 
-        private static bool IsGreaterThanZero(int credits)
-        {
-            return credits > 0;
-        }
+        private static bool IsGreaterThanZero(int credits) => credits > 0;
 
-        private bool IsInsufficentCredits(int credits)
-        {
-            return credits <= Value;
-        }
+        private bool IsInsufficentCredits(int credits) => credits <= Value;
     }
 }

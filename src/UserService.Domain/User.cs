@@ -5,9 +5,9 @@ namespace UserService.Domain;
 
 public class User : Entity
 {
-	public Name Name { get; protected set; }
-	public Email Email { get; protected set; }
-    public TranslationCredits TranslationCredits { get; protected set; }
+	public Name Name { get; private set; }
+	public Email Email { get; private set; }
+    public TranslationCredits TranslationCredits { get; private set; }
 
     private int creditsSpent;
 
@@ -82,13 +82,15 @@ public class User : Entity
         return Result.Success<User, Error>(this);
     }
 
-    public void SpendCredits(int credits)
+    public Result<User, Error> SpendCredits(int credits)
     {
         var result = TranslationCredits.SpendCredits(credits);
-        if (result.IsSuccess)
+        if (result.IsFailure)
         {
-            creditsSpent += credits;
+            return result.Error;
         }
+        creditsSpent += credits;
+        return Result.Success<User, Error>(this);
     }
 
     public Result<User, Error> AddCredits(int credits)
