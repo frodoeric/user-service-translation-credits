@@ -125,6 +125,4 @@ public class User : Entity
         }
         return UserTier.Sporadic;
     }
-
-    protected User(Result<Name, Error> result) { }
 }

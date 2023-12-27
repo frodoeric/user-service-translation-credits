@@ -100,47 +100,19 @@ namespace UserService.API.Tests.Acceptance.Features
             {
                 this.ScenarioStart();
 #line 8
-    testRunner.Given("a UserUpdateRequest", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("an existing user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 9
-    testRunner.When("I send a PUT request to /users/{id}", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.And("a UserUpdateRequest", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 10
-    testRunner.Then("I get an OK response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-#line 11
-    testRunner.And("the user data is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            }
-            this.ScenarioCleanup();
-        }
-        
-        [Xunit.SkippableFactAttribute(DisplayName="Attempt to update a user with invalid data")]
-        [Xunit.TraitAttribute("FeatureTitle", "Update users")]
-        [Xunit.TraitAttribute("Description", "Attempt to update a user with invalid data")]
-        public void AttemptToUpdateAUserWithInvalidData()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Attempt to update a user with invalid data", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 13
-  this.ScenarioInitialize(scenarioInfo);
-#line hidden
-            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                testRunner.SkipScenario();
-            }
-            else
-            {
-                this.ScenarioStart();
-#line 14
-    testRunner.Given("a UserUpdateRequest", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
-#line 15
     testRunner.When("I send a PUT request to /users/{id}", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 16
-    testRunner.Then("I get a Bad Request response with an error message", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 11
+    testRunner.Then("I get an OK response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 12
+    testRunner.And("the user is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

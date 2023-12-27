@@ -5,7 +5,7 @@ namespace UserService.Tests.Shared
 	public class UserUpdateRequestBuilder
 	{
 		private string email = UniqueEmailGenerator.Generate();
-		private string name = "Testy";
+		private string name = "TestyModified";
 
 		public UserUpdateRequest Build() => new()
 		{

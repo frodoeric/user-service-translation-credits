@@ -15,12 +15,12 @@ public class UserUpdater
         this.crmService = crmService;
     }
 
-    public async Task<Result<long, Error>> Update(long userId, UserData model)
+    public async Task<Result<User, Error>> Update(long userId, UserData model)
     {
         var user = userRepository.Get(userId);
         if (user == null)
         {
-            return Result.Failure<long, Error>(new Error("User not found"));
+            return Result.Failure<User, Error>(new Error("User not found"));
         }
 
         Result<User, Error> updateResult;
@@ -30,13 +30,13 @@ public class UserUpdater
             var nameResult = Name.Create(model.Name);
             if (nameResult.IsFailure)
             {
-                return Result.Failure<long, Error>(nameResult.Error);
+                return Result.Failure<User, Error>(nameResult.Error);
             }
 
             updateResult = user.UpdateName(nameResult.Value);
             if (updateResult.IsFailure)
             {
-                return Result.Failure<long, Error>(updateResult.Error);
+                return Result.Failure<User, Error>(updateResult.Error);
             }
         }
 
@@ -45,13 +45,13 @@ public class UserUpdater
             var emailResult = Email.Create(model.Email);
             if (emailResult.IsFailure)
             {
-                return Result.Failure<long, Error>(emailResult.Error);
+                return Result.Failure<User, Error>(emailResult.Error);
             }
 
             updateResult = user.UpdateEmail(emailResult.Value);
             if (updateResult.IsFailure)
             {
-                return Result.Failure<long, Error>(updateResult.Error);
+                return Result.Failure<User, Error>(updateResult.Error);
             }
         }
 
@@ -63,7 +63,7 @@ public class UserUpdater
             await crmService.UpdateUser(user);
         }
 
-        return Result.Success<long, Error>(userId);
+        return Result.Success<User, Error>(user);
     }
 }
 
