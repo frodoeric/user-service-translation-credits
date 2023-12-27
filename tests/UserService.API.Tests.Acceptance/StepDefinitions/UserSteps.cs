@@ -70,6 +70,27 @@ public class UserSteps : StepsBase
         _scenarioContext[RequestBodyKey] = givenRequest;
     }
 
+    [Given(@"a UserUpdateRequest with invalid email")]
+    public void GivenAUserUpdateRequestWithInvalidEmail()
+    {
+        var givenRequest = new UserUpdateRequestBuilder()
+            .WithEmail("invalid")
+            .Build();
+
+        _scenarioContext[RequestBodyKey] = givenRequest;
+    }
+
+    [Given(@"a UserUpdateRequest with invalid name")]
+    public void GivenAUserUpdateRequestWithInvalidName()
+    {
+        var givenRequest = new UserUpdateRequestBuilder()
+            .WithName("DavidAlejandroAlexanderMichaelChristopherBenjamin" +
+            "WilliamsonFrederickJonathanGregorySamuelHarringtonMontgomery")
+            .Build();
+
+        _scenarioContext[RequestBodyKey] = givenRequest;
+    }
+
     [When(@"I send a (.*) request to (.*)")]
     public async Task ISendARequestTo(string verb, string path)
     {

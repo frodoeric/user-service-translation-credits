@@ -34,8 +34,8 @@ namespace UserService.Domain.Tests.Unit
         [Fact]
         public void UpdateName_ShouldUpdateName_WhenValidNewName()
         {
-            var user = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
-            var newName = Name.Create("Jane Doe").Value;
+            var user = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var newName = Name.Set("Jane Doe").Value;
 
             var result = user.UpdateName(newName);
 
@@ -46,7 +46,7 @@ namespace UserService.Domain.Tests.Unit
         [Fact]
         public void UpdateEmail_ShouldUpdateEmail_WhenValidNewEmail()
         {
-            var user = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var user = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             var newEmail = Email.Create("jane@example.com").Value;
 
             var result = user.UpdateEmail(newEmail);
@@ -58,7 +58,7 @@ namespace UserService.Domain.Tests.Unit
         [Fact]
         public void AddCredits_ShouldIncreaseCredits_WhenPositiveAmount()
         {
-            var user = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var user = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
 
             var result = user.AddCredits(10);
 
@@ -69,7 +69,7 @@ namespace UserService.Domain.Tests.Unit
         [Fact]
         public void SubtractCredits_ShouldDecreaseCredits_WhenSufficientCredits()
         {
-            var user = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var user = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             user.AddCredits(15);
 
             var result = user.SubtractCredits(5);
@@ -88,7 +88,7 @@ namespace UserService.Domain.Tests.Unit
         public void UserTier_ShouldBeCorrectBasedOnTotalCreditsSpent(int totalSpent, UserTier expectedTier)
         {
             // Arrange
-            var user = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var user = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
 
             // Act
             user.AddCredits(totalSpent);
@@ -102,7 +102,7 @@ namespace UserService.Domain.Tests.Unit
         public void AddCredits_ShouldIncreaseTotalCreditsSpent_WhenCreditsAdded()
         {
             // Arrange
-            var user = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var user = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
 
             // Act
             user.AddCredits(10);

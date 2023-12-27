@@ -36,8 +36,8 @@ public class ErrorResponse
 	{
 		if (error is UniqueConstraintViolationError constraintViolationError)
 			return new ErrorResponse("UNIQUE_CONSTRAINT", constraintViolationError.Message, constraintViolationError);
-		if (error is TranslationCreditError validationError)
+		if (error is UserValidationError validationError)
             return new ErrorResponse("VALIDATION_ERROR", validationError.Message, validationError);
-		return new ErrorResponse("UNKNOWN_ERROR", error.Message);
+        return new ErrorResponse("UNKNOWN_ERROR", error.Message);
 	}
 }

@@ -7,8 +7,8 @@ namespace UserService.API.Contract.Users.Validator
         public TranslationCreditsRequestValidator()
         {
             RuleFor(request => request.TranslationCredits)
-                .NotEmpty().WithMessage("Credits is required")
-                .GreaterThan(0).WithMessage("Credits must be greater than 0");
+                .NotEmpty().WithMessage("Credits is required.")
+                .GreaterThan(0).WithMessage("Credits must be greater than 0.");
         }
     }
 }

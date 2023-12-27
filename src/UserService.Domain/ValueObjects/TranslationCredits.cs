@@ -49,14 +49,14 @@ namespace UserService.Domain.ValueObjects
         private Result<TranslationCredits, Error> GreaterThanZeroError()
         {
             return Result.Failure<TranslationCredits, Error>(
-            new TranslationCreditError(
+            new UserValidationError(
                 "Credits must be greater than 0.", nameof(TranslationCredits)));
         }
 
         private Result<TranslationCredits, Error> InsufficentCreditsError()
         {
             return Result.Failure<TranslationCredits, Error>(
-            new TranslationCreditError(
+            new UserValidationError(
                 "Insufficient credits.", nameof(TranslationCredits)));
         }
 

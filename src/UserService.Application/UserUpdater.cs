@@ -27,7 +27,7 @@ public class UserUpdater
 
         if (model.Name != null)
         {
-            var nameResult = Name.Create(model.Name);
+            var nameResult = Name.Set(model.Name);
             if (nameResult.IsFailure)
             {
                 return Result.Failure<User, Error>(nameResult.Error);

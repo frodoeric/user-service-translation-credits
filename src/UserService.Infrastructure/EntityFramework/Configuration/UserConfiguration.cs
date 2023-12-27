@@ -16,7 +16,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Name)
                .HasConversion(
                    name => name.Value,
-                   name => Name.Create(name).Value);
+                   name => Name.Set(name).Value);
 
         builder.Property(u => u.Email)
                .HasConversion(
