@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace UserService.API.ErrorResponseHandling;
 
-public class InvalidModelStateResponseFactory
+public static class InvalidModelStateResponseFactory
 {
 	public static IActionResult Create(ActionContext context)
 	{
