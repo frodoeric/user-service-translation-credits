@@ -5,8 +5,8 @@ public class CreditsResponse
     public int Credits { get; set; }
 
     public static CreditsResponse From(int credits) =>
-        new CreditsResponse
-		{
+        new()
+        {
             Credits = credits
         };
 }

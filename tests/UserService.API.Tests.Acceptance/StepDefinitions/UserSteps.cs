@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Azure;
 
 namespace UserService.API.Test.Acceptance.StepDefinitions;
 
@@ -86,6 +87,16 @@ public class UserSteps : StepsBase
         var givenRequest = new UserUpdateRequestBuilder()
             .WithName("DavidAlejandroAlexanderMichaelChristopherBenjamin" +
             "WilliamsonFrederickJonathanGregorySamuelHarringtonMontgomery")
+            .Build();
+
+        _scenarioContext[RequestBodyKey] = givenRequest;
+    }
+
+    [Given(@"a TranslationCreditsRequest with (.*) credits")]
+    public void GivenATranslationCreditsRequestWithCredits(int credits)
+    {
+        var givenRequest = new TranslationCreditsRequestBuilder()
+            .WithCredits(credits)
             .Build();
 
         _scenarioContext[RequestBodyKey] = givenRequest;
@@ -194,6 +205,18 @@ public class UserSteps : StepsBase
         }
     }
 
+    [Then(@"the user's credits are increased by (.*)")]
+    public void ThenTheUserSCreditsAreIncreasedBy(int credits)
+    {
+        var httpResponse = (HttpResponseMessage)_scenarioContext[HttpResponseKey];
+
+        httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var contentStream = httpResponse.Content.ReadAsStream();
+        var response = JsonSerializer.Deserialize<CreditsResponse>(contentStream, _jsonOptions);
+
+        AssertEquivalent(response!, credits);
+    }
+
     private static void AssertEquivalent(UserResponse response, User user)
     {
         response.Id.Should().Be(user.Id);
@@ -212,4 +235,11 @@ public class UserSteps : StepsBase
         request.Name.Should().Be(user.Name);
         request.Email.Should().Be(user.Email);
     }
+
+    private static void AssertEquivalent(CreditsResponse response, int credits)
+    {
+        response.Should().NotBeNull();
+        response.Credits.Should().Be(credits);
+    }
+
 }

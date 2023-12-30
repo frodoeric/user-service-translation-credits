@@ -8,6 +8,8 @@ namespace UserService.Domain.ValueObjects
         {
         }
 
+        public static implicit operator TranslationCredits(int value) => new(value);
+
         public Result<TranslationCredits, Error> SpendCredits(int credits)
         {
             if (!IsGreaterThanZero(credits))
