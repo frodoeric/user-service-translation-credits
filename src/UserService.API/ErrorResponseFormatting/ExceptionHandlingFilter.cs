@@ -6,23 +6,30 @@ namespace UserService.API.ErrorResponseHandling;
 
 public class ExceptionHandlingFilter : IActionFilter, IOrderedFilter
 {
-	public int Order { get; } = int.MaxValue - 10;
+    private readonly ILogger<ExceptionHandlingFilter> _logger;
 
-	public void OnActionExecuting(ActionExecutingContext context) { }
+    public ExceptionHandlingFilter(ILogger<ExceptionHandlingFilter> logger)
+    {
+        _logger = logger;
+    }
 
-	public void OnActionExecuted(ActionExecutedContext context)
-	{
-		if (context.Exception is not null)
-		{
-			var response = new ErrorResponse("UNHANDLED_EXCEPTION", context.Exception.Message);
-			context.Result = new ObjectResult(response)
-			{
-				StatusCode = StatusCodes.Status500InternalServerError,
-			};
+    public int Order { get; } = int.MaxValue - 10;
 
-			// TODO: Log exception
+    public void OnActionExecuting(ActionExecutingContext context) { }
 
-			context.ExceptionHandled = true;
-		}
-	}
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
+        if (context.Exception is not null)
+        {
+            var response = new ErrorResponse("UNHANDLED_EXCEPTION", context.Exception.Message);
+            context.Result = new ObjectResult(response)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
+
+            _logger.LogError(context.Exception, "An unhandled exception occurred.");
+
+            context.ExceptionHandled = true;
+        }
+    }
 }
