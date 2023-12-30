@@ -3,6 +3,8 @@ using UserService.API.Contract.Users;
 using UserService.Application;
 using UserService.Application.Ports;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Domain;
+using CSharpFunctionalExtensions;
 
 namespace UserService.API.Controllers;
 
@@ -79,8 +81,16 @@ public class UserController : ControllerBase
     {
         var updateResult = await userUpdater.Update(id, model);
 
-        return updateResult.IsFailure
-            ? BadRequest(ErrorResponse.From(updateResult.Error))
-            : Ok(updateResult.Value);
+        if (updateResult.IsSuccess)
+        {
+            return Ok(UserResponse.From(updateResult.Value));
+        }
+
+        if (updateResult.Error.Message == "User not found")
+        {
+            return NotFound(ErrorResponse.EntityNotFound());
+        }
+
+        return BadRequest(ErrorResponse.From(updateResult.Error));
     }
 }

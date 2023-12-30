@@ -28,7 +28,7 @@ namespace UserService.Domain.Tests.Unit
 
             // Assert
             Assert.True(result.IsFailure);
-            Assert.Equal("Email can't be empty", result.Error.Message);
+            Assert.Equal("Email can't be empty.", result.Error.Message);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace UserService.Domain.Tests.Unit
 
             // Assert
             Assert.True(result.IsFailure);
-            Assert.Equal("Email is too long", result.Error.Message);
+            Assert.Equal("Email is too long.", result.Error.Message);
         }
 
         [Theory]

@@ -21,7 +21,7 @@ public class User : Entity
 
     public static Result<User, Error> Create(string name, string email)
     {
-        var nameResult = Name.Create(name);
+        var nameResult = Name.Set(name);
         var emailResult = Email.Create(email);
 
         if (nameResult.IsFailure || emailResult.IsFailure)
@@ -55,7 +55,7 @@ public class User : Entity
             return Result.Success<User, Error>(this);
         }
 
-        var nameResult = Name.Create(newName.Value);
+        var nameResult = Name.Set(newName.Value);
 
         this.Name = nameResult.Value;
         return Result.Success<User, Error>(this);
@@ -125,6 +125,4 @@ public class User : Entity
         }
         return UserTier.Sporadic;
     }
-
-    protected User(Result<Name, Error> result) { }
 }

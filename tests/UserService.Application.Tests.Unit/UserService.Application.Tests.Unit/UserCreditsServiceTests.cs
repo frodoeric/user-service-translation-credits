@@ -27,7 +27,7 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task AddCredits_ShouldReturnSuccess_WhenUserExists()
         {
-            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
             var request = new TranslationCreditsRequest() { TranslationCredits = 10 };
@@ -43,7 +43,7 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task AddCredits_ShouldReturnSuccess_WhenUserExistsAndCreditsAreAdded()
         {
-            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             var request = new TranslationCreditsRequest() { TranslationCredits = 10 };
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
@@ -71,7 +71,7 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SubtractCredits_ShouldReturnSuccess_WhenSufficientCredits()
         {
-            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
@@ -89,7 +89,7 @@ namespace UserService.Application.Tests.Unit
         public async Task SubtractCredits_ShouldReturnSuccess_WhenUserExistsAndCreditsAreSubtracted()
         {
             var request = new TranslationCreditsRequest() { TranslationCredits = 5 };
-            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
@@ -114,7 +114,7 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SubtractCredits_ShouldReturnSuccess_WhenInsufficientCredits()
         {
-            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(1);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
@@ -131,7 +131,7 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SpendCredits_ShouldReturnFailure_WhenInsufficientCredits()
         {
-            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(1);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
@@ -146,7 +146,7 @@ namespace UserService.Application.Tests.Unit
         [Fact]
         public async Task SpendCredits_ShouldReturnSuccess_WhenSufficientCredits()
         {
-            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
@@ -164,7 +164,7 @@ namespace UserService.Application.Tests.Unit
         public async Task SpendCredits_ShouldReturnSuccess_WhenUserExistsAndCreditsAreSubtracted()
         {
             var request = new TranslationCreditsRequest() { TranslationCredits = 5 };
-            var oldUser = new User(Name.Create("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
+            var oldUser = new User(Name.Set("Robert Lewandosky").Value, Email.Create("test@example.com").Value);
             oldUser.AddCredits(15);
             mockUserRepository.Setup(repo => repo.Get(It.IsAny<long>())).Returns(oldUser);
 
