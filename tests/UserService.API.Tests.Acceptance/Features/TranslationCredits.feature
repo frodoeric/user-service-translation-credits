@@ -17,3 +17,10 @@
     When I send a POST request to /users/{id}/credits/spend
     Then I get an OK response
     And the user's credits will be equal to 5
+
+  Scenario: Successfully subtract credits from a user's account
+    Given an existing user with 10 credits
+    And a TranslationCreditsRequest with 5 credits
+    When I send a POST request to /users/{id}/credits/subtract
+    Then I get an OK response
+    And the user's credits will be equal to 5
