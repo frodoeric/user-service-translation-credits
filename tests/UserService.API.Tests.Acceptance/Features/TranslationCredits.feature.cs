@@ -19,7 +19,7 @@ namespace UserService.API.Tests.Acceptance.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class TranslationTreditsFeature : object, Xunit.IClassFixture<TranslationTreditsFeature.FixtureData>, System.IDisposable
+    public partial class TranslationCreditsFeature : object, Xunit.IClassFixture<TranslationCreditsFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
@@ -31,7 +31,7 @@ namespace UserService.API.Tests.Acceptance.Features
 #line 1 "TranslationCredits.feature"
 #line hidden
         
-        public TranslationTreditsFeature(TranslationTreditsFeature.FixtureData fixtureData, UserService_API_Tests_Acceptance_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public TranslationCreditsFeature(TranslationCreditsFeature.FixtureData fixtureData, UserService_API_Tests_Acceptance_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -40,7 +40,7 @@ namespace UserService.API.Tests.Acceptance.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "translation tredits", "  As an API client\r\n  I want to be able to manage credits for an user\r\n  So that " +
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "translation credits", "  As an API client\r\n  I want to be able to manage credits for an user\r\n  So that " +
                     "I can manage their credit balance as needed", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -82,7 +82,7 @@ namespace UserService.API.Tests.Acceptance.Features
         }
         
         [Xunit.SkippableFactAttribute(DisplayName="Successfully add credits to a user\'s account")]
-        [Xunit.TraitAttribute("FeatureTitle", "translation tredits")]
+        [Xunit.TraitAttribute("FeatureTitle", "translation credits")]
         [Xunit.TraitAttribute("Description", "Successfully add credits to a user\'s account")]
         public void SuccessfullyAddCreditsToAUsersAccount()
         {
@@ -112,7 +112,44 @@ namespace UserService.API.Tests.Acceptance.Features
     testRunner.Then("I get an OK response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 12
-    testRunner.And("the user\'s credits are increased by 10", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.And("the user\'s credits will be equal to 10", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Successfully spend credits from a user\'s account")]
+        [Xunit.TraitAttribute("FeatureTitle", "translation credits")]
+        [Xunit.TraitAttribute("Description", "Successfully spend credits from a user\'s account")]
+        public void SuccessfullySpendCreditsFromAUsersAccount()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Successfully spend credits from a user\'s account", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 14
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 15
+    testRunner.Given("an existing user with 10 credits", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 16
+    testRunner.And("a TranslationCreditsRequest with 5 credits", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 17
+    testRunner.When("I send a POST request to /users/{id}/credits/spend", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 18
+    testRunner.Then("I get an OK response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 19
+    testRunner.And("the user\'s credits will be equal to 5", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -125,12 +162,12 @@ namespace UserService.API.Tests.Acceptance.Features
             
             public FixtureData()
             {
-                TranslationTreditsFeature.FeatureSetup();
+                TranslationCreditsFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                TranslationTreditsFeature.FeatureTearDown();
+                TranslationCreditsFeature.FeatureTearDown();
             }
         }
     }

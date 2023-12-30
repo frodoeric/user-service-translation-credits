@@ -35,6 +35,24 @@ public class UserSteps : StepsBase
         _scenarioContext[IdKey] = givenUser.Id;
     }
 
+    [Given(@"an existing user with (.*) credits")]
+    public async Task GivenAnExistingUserWithCredits(int credits)
+    {
+        var givenUsers = new List<User>();
+        if (_scenarioContext.ContainsKey(GivenUsersKey))
+            givenUsers.AddRange((List<User>)_scenarioContext[GivenUsersKey]);
+
+        var givenUser = new UserBuilder()
+            .Build();
+        givenUser.AddCredits(credits);
+
+        await SaveEntity(givenUser);
+
+        givenUsers.Add(givenUser);
+        _scenarioContext[GivenUsersKey] = givenUsers;
+        _scenarioContext[IdKey] = givenUser.Id;
+    }
+
     [Given(@"two existing users")]
     public async Task GivenTwoExistingUsers()
     {
@@ -205,7 +223,7 @@ public class UserSteps : StepsBase
         }
     }
 
-    [Then(@"the user's credits are increased by (.*)")]
+    [Then(@"the user's credits will be equal to (.*)")]
     public void ThenTheUserSCreditsAreIncreasedBy(int credits)
     {
         var httpResponse = (HttpResponseMessage)_scenarioContext[HttpResponseKey];
